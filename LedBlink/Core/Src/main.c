@@ -103,7 +103,7 @@ int main(void)
   	HAL_GPIO_WritePin(GPIOA, LD2_Pin, 0);
   	HAL_Delay(1000);
   	GPIOA->ODR=0x30; //odr:한번에 데이터 전부 출력
-  	GPIOA->IDR  //16bit로 읽어냄
+  	GPIOA->IDR;  //16bit로 읽어냄
   }
   /* USER CODE END 3 */
 }

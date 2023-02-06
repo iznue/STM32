@@ -142,3 +142,12 @@ Command-line arguments:  -os win32 -ws win32 -arch x86_64
 
 !ENTRY com.st.stm32cube.ide.mcu.debug 2 2 2023-02-06 13:11:18.454
 !MESSAGE ST-LINK firmware verification, No latest info found: -1
+
+!ENTRY org.eclipse.cdt.core 1 0 2023-02-06 15:13:06.986
+!MESSAGE Indexed 'temperatureAdc' (19 sources, 81 headers) in 1.79 sec: 4,259 declarations; 17,963 references; 0 unresolved inclusions; 1 syntax errors; 2 unresolved names (0.009%)
+
+!ENTRY com.st.stm32cube.ide.mcu.debug.launch 2 0 2023-02-06 15:36:12.041
+!MESSAGE Won't launch debug session since we failed to locate the binary.
+
+!ENTRY com.st.stm32cube.ide.mcu.debug.launch 2 0 2023-02-06 15:36:33.730
+!MESSAGE Won't launch debug session since we failed to locate the binary.
