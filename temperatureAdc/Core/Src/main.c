@@ -22,6 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "uart.h"
+#include "filter.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -102,13 +103,25 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+  	/*
   	HAL_ADC_Start(&hadc1);
-  	HAL_ADC_PollForConversion(&hadc1, 1); //변환이 끝나는 것을 기다림(대기) 1msec
-  	uint16_t value = HAL_ADC_GetValue(&hadc1); // 변환값 읽기
+  	HAL_ADC_PollForConversion(&hadc1, 1); //변환�?� �??나는 것�?� 기다림(대기) 1msec
+  	uint16_t value = HAL_ADC_GetValue(&hadc1); // 변환값 �?�기
   	HAL_ADC_Stop(&hadc1);
   	// adc 변환 주기
 
   	printf("Temperature = %d\n", value);
+  	HAL_Delay(100);
+  	*/
+
+  	HAL_ADC_Start(&hadc1);
+  	HAL_ADC_PollForConversion(&hadc1, 1); //변환�?� �??나는 것�?� 기다림(대기) 1msec
+  	uint16_t value = HAL_ADC_GetValue(&hadc1); // 변환값 �?�기
+  	HAL_ADC_Stop(&hadc1);
+  	// adc 변환 주기
+
+  	//printf("T = %d\tA = %d\tK = %d",value, AvgFilter(value),(int)Kalman((double)value));
+  	printf("%d %d %d\n\n",value, AvgFilter(value),(int)Kalman((double)value));
   	HAL_Delay(100);
   }
   /* USER CODE END 3 */
