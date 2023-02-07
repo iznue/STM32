@@ -58,6 +58,34 @@ static void MX_USART1_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+/* 1.
+int memory(int addr, int data, int RnW){ // 전역변수 사용x 메모리 함수를 지정하여 사용 가능
+	static int buffer[255];
+	int result;
+	if(RnW){
+			// read action
+			result = buffer[addr];
+	}
+	else{
+			// write action
+			buffer[addr] = data;
+	}
+	return result;
+}
+*/
+// 2. pointer로 callback과 main함수 안에 선언 -> 같은 주소를 2함수가 sharing함 -> compile 시에 꼬일 수도 있음(영역 할당)
+// stm32f411retx_ram.id 파일에서 memory 변경 (권장하지는 않음)
+// volatile unsigned int *myPointer = (volatile unsigned int *)0x2001fffb;
+
+/*
+typedef struct{
+	int taskA;
+	int taskB;
+	uint32_t bufferSwitch;
+	uint8_t stateSwitch;
+} system_t;
+*/
+//system_t wSystem;
 
 // �?�작주기용 변수
 int taskA;
@@ -66,7 +94,9 @@ int taskB;
 // switch용 변수
 uint32_t bufferSwitch; //switch�?� �?태를 1msec마다 저장
 uint8_t stateSwitch; //switch�?� �?태를 결정
+
 //1msec마다 호출
+
 void callbackSystick(){ //system 내부�?으로 1msec마다 cpu�?서 �?체 호출
 	bufferSwitch = bufferSwitch << 1;
 	bufferSwitch += HAL_GPIO_ReadPin(SW_GPIO_Port, SW_Pin);
@@ -77,6 +107,17 @@ void callbackSystick(){ //system 내부�?으로 1msec마다 cpu�?서 �?체
 	if(taskB > 0) taskB--;
 }
 
+/*
+void callbackSystick(){
+	wSystem.bufferSwitch = wSystem.bufferSwitch << 1;
+	wSystem.bufferSwitch += HAL_GPIO_ReadPin(SW_GPIO_Port, SW_Pin);
+	if(wSystem.bufferSwitch == 0)wSystem.stateSwitch = 0;
+	if(wSystem.bufferSwitch == 0xffffffff)wSystem.stateSwitch = 1; //f=4bit
+	// �?�작 주기 카운트
+	if(wSystem.taskA > 0) wSystem.taskA--;
+	if(wSystem.taskB > 0) wSystem.taskB--;
+}
+*/
 void enableBuzzer(){
 	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
 }

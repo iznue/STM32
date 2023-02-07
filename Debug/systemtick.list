@@ -27,23 +27,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000030  00000000  00000000  00020070  2**0
                   CONTENTS, READONLY
- 12 .debug_info   0000d20a  00000000  00000000  000200a0  2**0
+ 12 .debug_info   0000d20f  00000000  00000000  000200a0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 00001c68  00000000  00000000  0002d2aa  2**0
+ 13 .debug_abbrev 00001c4e  00000000  00000000  0002d2af  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 00000c78  00000000  00000000  0002ef18  2**3
+ 14 .debug_aranges 00000c78  00000000  00000000  0002ef00  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_ranges 00000bc0  00000000  00000000  0002fb90  2**3
+ 15 .debug_ranges 00000bc0  00000000  00000000  0002fb78  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  000170d7  00000000  00000000  00030750  2**0
+ 16 .debug_macro  000170d7  00000000  00000000  00030738  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   0000dbf8  00000000  00000000  00047827  2**0
+ 17 .debug_line   0000dbf8  00000000  00000000  0004780f  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    0008f2e3  00000000  00000000  0005541f  2**0
+ 18 .debug_str    0008f2e3  00000000  00000000  00055407  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000050  00000000  00000000  000e4702  2**0
+ 19 .comment      00000050  00000000  00000000  000e46ea  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00003be4  00000000  00000000  000e4754  2**2
+ 20 .debug_frame  00003be4  00000000  00000000  000e473c  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -411,11 +411,11 @@ Disassembly of section .text:
  8000582:	bf00      	nop
 
 08000584 <callbackSystick>:
-
-// switch용 변수
 uint32_t bufferSwitch; //switch�?� �?태를 1msec마다 저장
 uint8_t stateSwitch; //switch�?� �?태를 결정
+
 //1msec마다 호출
+
 void callbackSystick(){ //system 내부�?으로 1msec마다 cpu�?서 �?체 호출
  8000584:	b580      	push	{r7, lr}
  8000586:	af00      	add	r7, sp, #0
@@ -483,7 +483,11 @@ void callbackSystick(){ //system 내부�?으로 1msec마다 cpu�?서 �?체
  8000600:	2000011c 	.word	0x2000011c
 
 08000604 <enableBuzzer>:
-
+	// �?�작 주기 카운트
+	if(wSystem.taskA > 0) wSystem.taskA--;
+	if(wSystem.taskB > 0) wSystem.taskB--;
+}
+*/
 void enableBuzzer(){
  8000604:	b580      	push	{r7, lr}
  8000606:	af00      	add	r7, sp, #0
