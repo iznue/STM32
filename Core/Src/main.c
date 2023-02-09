@@ -21,7 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <string.h>
+#include "uart.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -41,6 +42,8 @@
 /* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1;
 
+UART_HandleTypeDef huart1;
+
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -49,25 +52,28 @@ I2C_HandleTypeDef hi2c1;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
+static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+/*
 #define memTemperatureBase 0
 #define memTemperatureSize 4
 #define memC02Base 				 (memTemperatureBase+memTemperatureSize)
 #define memC02Size				 4
 #define memDeviceBase		   (memC02Base+memC02Size)
 #define memDeviceSize			 20
-
+*/
+/*
 void writeEeprome(uint16_t address, uint8_t data){
 	uint8_t txBuffer[3];
-	txBuffer[0] = address >> 8; //상위 8bit를 보냄
+	txBuffer[0] = address >> 8; //�?위 8bit를 보냄
 	txBuffer[1] = address & 0x00ff; //하위 8bit를 보냄
 	txBuffer[2] = data;
-	HAL_I2C_Master_Transmit(&hi2c1, 0xA0, txBuffer, sizeof(txBuffer), 1); //1msec동안 ACK신호가 없으면 동작 X
+	HAL_I2C_Master_Transmit(&hi2c1, 0xA0, txBuffer, sizeof(txBuffer), 1); //1msec�?�안 ACK신호가 없으면 �?�작 X
 	HAL_Delay(5);
 }
 
@@ -77,7 +83,7 @@ uint8_t readEeprom(uint8_t address){
 	txBuffer[0] = address >> 8;
 	txBuffer[1] = address & 0x00ff;
 	HAL_I2C_Master_Transmit(&hi2c1, 0xA0, txBuffer, sizeof(txBuffer), Timeout);
-	HAL_I2C_Master_Receive(&hi2c1, 0xA0, &rxBuffer, 1, 1); // rxBuffer에 읽은 값이 저장되어 있음
+	HAL_I2C_Master_Receive(&hi2c1, 0xA0, &rxBuffer, 1, 1); // rxBuffer�? �?��?� 값�?� 저장�?�어 있�?�
 	return rxBuffer;
 }
 
@@ -92,6 +98,32 @@ uint8_t readEeprom2(uint16_t address){
 	return rxBuffer;
 }
 
+typedef struct{
+	uint8_t sec;
+	uint8_t min;
+	uint8_t hour;
+	uint8_t day;
+	uint8_t date;
+	uint8_t month;
+	uint8_t year;
+} DataTime_t;
+*/
+/*
+void writeRtc(DataTime_t dateTime){
+	//uint8_t txBuffer[7];
+	//memcpy(txBuffer, dateTime, 7);
+	//HAL_I2C_Mem_Write(&hi2c1, 0xA0, address, 2, &rxBuffer, 7, 1);
+
+	HAL_I2C_Mem_Write(&hi2c1, 0xD0, 0, 1, &dateTime, 7, 1);
+}
+
+DataTime_t readRtc(){
+	DataTime_t result;
+	HAL_I2C_Mem_Read(&hi2c1, 0xD0, 0, 1, &result, 7, 1);
+	return result;
+}
+*/
+/*
 void writeEeprom4Byte(uint16_t address, uint32_t data){
 
 	uint8_t buffer[4];
@@ -110,10 +142,9 @@ void writeEeprom4Byte(uint16_t address, uint32_t data){
 	writeEeprom(address, buffer[0]);
 	writeEeprom(address+1, buffer[1]);
 	writeEeprom(address+2, buffer[2]);
-	writeEeprom(address+3, buffer[3]);
-	*/
-}
-
+	writeEeprom(address+3, buffer[3]);*/
+//}
+/*
 uint32_t readEeprom4Byte(uint16_t address){
 	uint8_t rxBuffer[4];
 	uint32_t result;
@@ -124,7 +155,7 @@ uint32_t readEeprom4Byte(uint16_t address){
 	memcpy(&result, rxBuffer, 4);
 	return result;
 }
-
+*/
 /* USER CODE END 0 */
 
 /**
@@ -156,14 +187,35 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_I2C1_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  writeEeprom4Byte(memTemperatureBase, 0x12345678);
-  writeEeprom4Byte(memC02Base, 0x87654321);
+  //printf("Hello world\n");
+  printf("I2C Scanner\n");
 
-  /*
+  //reset
+  HAL_GPIO_WritePin(OLED_reset_GPIO_Port, OLED_reset_Pin, 0);
+  HAL_Delay(1);
+  HAL_GPIO_WritePin(OLED_reset_GPIO_Port, OLED_reset_Pin, 1);
+
+  for(int address = 0; address < 256; address++){ // read wirte를 �?�함한것으로 �?�?하고 호출하므로 256지정
+  		//uint32_t result = HAL_I2C_IsDeviceReady(&hi2c1, address, 1, 1); // 장치 준비 확�?� (ping과 �?��?�) 준비가 �?�면 result�? ok입력
+  		int result = HAL_I2C_IsDeviceReady(&hi2c1, address, 0, 1);
+  		if(result == HAL_OK){
+  				printf("%02x = %d\n", address, result);
+  		}
+  		/*
+  		if(result == HAL_OK){ // result == 0 : HAL_OK
+  		}*/
+  }
+
+  /* 2.
+  writeEeprom4Byte(memTemperatureBase, 0x12345678);
+  writeEeprom4Byte(memC02Base, 0x87654321); // define으로 정�?�하고 편하게 사용하기
+	*/
+  /* 1.
   // for write to eeprom
   uint8_t txBuffer[3];
-  txBuffer[0] = upperAddress; // 상위주소
+  txBuffer[0] = upperAddress; // �?위주소
   txBuffer[1] = lowerAddress;
   txBuffer[2] = data;
   HAL_I2C_Master_Transmit(&hi2c1, 0x7f, txBuffer, 3, 1);
@@ -266,15 +318,60 @@ static void MX_I2C1_Init(void)
 }
 
 /**
+  * @brief USART1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART1_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART1_Init 0 */
+
+  /* USER CODE END USART1_Init 0 */
+
+  /* USER CODE BEGIN USART1_Init 1 */
+
+  /* USER CODE END USART1_Init 1 */
+  huart1.Instance = USART1;
+  huart1.Init.BaudRate = 115200;
+  huart1.Init.WordLength = UART_WORDLENGTH_8B;
+  huart1.Init.StopBits = UART_STOPBITS_1;
+  huart1.Init.Parity = UART_PARITY_NONE;
+  huart1.Init.Mode = UART_MODE_TX_RX;
+  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART1_Init 2 */
+
+  /* USER CODE END USART1_Init 2 */
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
   */
 static void MX_GPIO_Init(void)
 {
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(OLED_reset_GPIO_Port, OLED_reset_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : OLED_reset_Pin */
+  GPIO_InitStruct.Pin = OLED_reset_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(OLED_reset_GPIO_Port, &GPIO_InitStruct);
 
 }
 
