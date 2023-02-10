@@ -1,0 +1,5 @@
+../Core/Src/DHT11.c:6:6:DelayUs	16	static
+../Core/Src/DHT11.c:13:6:checkPinWithTimeoutUs	16	static
+../Core/Src/DHT11.c:19:6:DHT11_Start	32	static
+../Core/Src/DHT11.c:37:9:DHT11_CheckResponse	16	static
+../Core/Src/DHT11.c:50:9:DHT11_Read	16	static
