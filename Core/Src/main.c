@@ -66,7 +66,7 @@ uint8_t IsFirstCatured = 0; // trigger echo state check
 uint8_t Distance = 0;
 
 void delay_us(uint16_t time) {
-	// __HAL_TIM_SET_COUNTER(&htim3, 0); htim3.Instance -> CNT = 0; 동일
+	// __HAL_TIM_SET_COUNTER(&htim3, 0); htim3.Instance -> CNT = 0; �?��?�
 	//while((__HAL_TIM_GET_COUNTER(&htim3))<time); while(htim3.Instance->CNT < time);
 	htim3.Instance -> CNT = 0;
 	while(htim3.Instance->CNT < time);
@@ -77,8 +77,8 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim){
 			if(IsFirstCatured ==0){
 					IC_Val1 = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
 					IsFirstCatured = 1;
-					__HAL_TIM_SET_CAPTUREPOLARITY(htim, TIM_CHANNEL_1, TIM_INPUTCHANNELPOLARITY_FALLING); // 극성을 falling으로 바꿈
-					// 내려갈 때 interrupt 발생, interrupt 방향을 바꿈
+					__HAL_TIM_SET_CAPTUREPOLARITY(htim, TIM_CHANNEL_1, TIM_INPUTCHANNELPOLARITY_FALLING); // 극성�?� falling으로 바꿈
+					// 내려갈 때 interrupt 발�?, interrupt 방향�?� 바꿈
 			}
 			else if(IsFirstCatured == 1){
 					IC_Val2 = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
@@ -90,7 +90,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim){
 							Difference = (0xffff - IC_Val1) + IC_Val2;
 					}
 					Distance = Difference * 0.034 / 2;
-					IsFirstCatured = 0; //다음 거리 측정을 위해 0으로 초기화
+					IsFirstCatured = 0; //다�?� 거리 측정�?� 위해 0으로 초기화
 
 					__HAL_TIM_SET_CAPTUREPOLARITY(htim, TIM_CHANNEL_1, TIM_INPUTCHANNELPOLARITY_RISING);
 					__HAL_TIM_DISABLE_IT(htim, TIM_IT_CC1);
@@ -160,11 +160,22 @@ int main(void)
   	ssd1306_UpdateScreen();
   	HAL_Delay(200);
   	*/
+  	/*
   	// chart
   	softScrollLeft();
   	ssd1306_DrawPixel(127, getDistance(), 1);
   	ssd1306_UpdateScreen();
   	HAL_Delay(200);
+  	*/
+  	//printf("%4dcm", getDistance());
+  	if(getDistance()<50){
+  			HAL_GPIO_WritePin(sensor_GPIO_Port, sensor_Pin, 1);
+  			HAL_Delay(10);
+  	}
+  	else if (getDistance() > 55){
+  			HAL_GPIO_WritePin(sensor_GPIO_Port, sensor_Pin, 0);
+  			HAL_Delay(10);
+  	}
   }
   /* USER CODE END 3 */
 }
@@ -316,10 +327,10 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, OLED_Reset_Pin|Trigger_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, OLED_Reset_Pin|Trigger_Pin|sensor_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : OLED_Reset_Pin Trigger_Pin */
-  GPIO_InitStruct.Pin = OLED_Reset_Pin|Trigger_Pin;
+  /*Configure GPIO pins : OLED_Reset_Pin Trigger_Pin sensor_Pin */
+  GPIO_InitStruct.Pin = OLED_Reset_Pin|Trigger_Pin|sensor_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

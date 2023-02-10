@@ -61,6 +61,8 @@ void Error_Handler(void);
 #define OLED_Reset_GPIO_Port GPIOA
 #define Trigger_Pin GPIO_PIN_1
 #define Trigger_GPIO_Port GPIOA
+#define sensor_Pin GPIO_PIN_7
+#define sensor_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 
