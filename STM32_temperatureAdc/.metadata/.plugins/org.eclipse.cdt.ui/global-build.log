@@ -1,0 +1,30 @@
+16:45:56 **** Incremental Build of configuration Debug for project temperatureAdc ****
+make -j4 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F411xE -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:124:4: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+  124 |    printf("%d %d %d\n\n",value, AvgFilter(value),(int)Kalman((double)value));
+      |    ^~~~~~
+../Core/Src/main.c:124:4: warning: incompatible implicit declaration of built-in function 'printf'
+../Core/Src/main.c:26:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+   25 | #include "filter.h"
+  +++ |+#include <stdio.h>
+   26 | /* USER CODE END Includes */
+arm-none-eabi-gcc -o "temperatureAdc.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\npedu032\STM32CubeIDE\ej\temperatureAdc\STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="temperatureAdc.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: temperatureAdc.elf
+ 
+arm-none-eabi-size   temperatureAdc.elf 
+arm-none-eabi-objdump -h -S  temperatureAdc.elf  > "temperatureAdc.list"
+   text	   data	    bss	    dec	    hex	filename
+  20192	    160	   2192	  22544	   5810	temperatureAdc.elf
+Finished building: default.size.stdout
+ 
+Finished building: temperatureAdc.list
+ 
+16:49:51 **** Incremental Build of configuration Debug for project temperatureAdc ****
+make -j4 all 
+arm-none-eabi-size   temperatureAdc.elf 
+   text	   data	    bss	    dec	    hex	filename
+  20192	    160	   2192	  22544	   5810	temperatureAdc.elf
+Finished building: default.size.stdout
+ 

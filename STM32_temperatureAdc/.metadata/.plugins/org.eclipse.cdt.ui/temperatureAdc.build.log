@@ -1,0 +1,10 @@
+16:49:51 **** Incremental Build of configuration Debug for project temperatureAdc ****
+make -j4 all 
+arm-none-eabi-size   temperatureAdc.elf 
+   text	   data	    bss	    dec	    hex	filename
+  20192	    160	   2192	  22544	   5810	temperatureAdc.elf
+Finished building: default.size.stdout
+ 
+
+16:49:51 Build Finished. 0 errors, 0 warnings. (took 282ms)
+
